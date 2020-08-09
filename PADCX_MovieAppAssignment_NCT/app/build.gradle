@@ -1,0 +1,139 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'me.moallemi.advanced-build-version'
+
+advancedVersioning {
+    nameOptions {
+        versionMajor 0
+        versionMinor 0
+        versionPatch 1
+    }
+    codeOptions {
+        versionCodeType 'AUTO_INCREMENT_ONE_STEP'
+    }
+    outputOptions {
+        renameOutput true
+        nameFormat 'MovieApp-v${versionName}'
+    }
+}
+
+def appVersionName = advancedVersioning.versionName
+def appVersionCode = advancedVersioning.versionCode
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.padcmyanmar.androidftc.padcx_movieappassignment_nct"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode appVersionCode
+        versionName appVersionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String','MY_API_KEY',"\"${verySensitiveData}\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            debuggable false
+//            resourceShrinking true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        flavorDimensions "appModule"
+        def BASE_URL_FIELD = "BASE_URL_FIELD"
+        def BASE_DEV_URL = "\"https://dev.padcmyanmar.com\""
+        def BASE_PROD_URL = "\"https://padcmyanmar.com\""
+        def BASE_STAGY_URL = "\"https://stagy.padcmyanmar.com\""
+        prod {
+            dimension "appModule"
+            applicationIdSuffix = ".prod"
+            manifestPlaceholders = [appName : "@string/app_name_prod"]
+            buildConfigField 'String',BASE_URL_FIELD,BASE_PROD_URL
+        }
+        dev {
+            dimension "appModule"
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders = [appName : "@string/app_name_dev"]
+            buildConfigField 'String',BASE_URL_FIELD,BASE_DEV_URL
+        }
+        stagy {
+            dimension "appModule"
+            applicationIdSuffix = ".stagy"
+            manifestPlaceholders = [appName : "@string/app_name_stagy"]
+            buildConfigField 'String',BASE_URL_FIELD,BASE_STAGY_URL
+        }
+    }
+}
+
+dependencies {
+    implementation project(":shared")
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation rootProject.ext.libraries.kotlin
+    implementation rootProject.ext.libraries.appCompat
+    implementation rootProject.ext.libraries.coreKtx
+    implementation rootProject.ext.libraries.constraintLayout
+    implementation rootProject.ext.libraries.recyclerView
+    implementation rootProject.ext.libraries.cardView
+    implementation rootProject.ext.libraries.legacySupport
+    implementation rootProject.ext.libraries.imageSlider
+
+    // image binder
+    implementation rootProject.ext.libraries.glide
+    annotationProcessor rootProject.ext.libraries.glideAnnotation
+
+
+    //Retrofit
+    implementation rootProject.ext.libraries.retrofit
+    implementation rootProject.ext.libraries.converterGson
+    implementation rootProject.ext.libraries.adapterRxJava2
+
+
+    // LiveData
+    implementation rootProject.ext.libraries.lifeCycleLiveDataKtx
+
+    // lifecycle components
+    implementation rootProject.ext.libraries.lifeCycleExtensions
+    kapt rootProject.ext.libraries.lifeCycleCompiler
+
+    // Annotation processor
+    kapt rootProject.ext.libraries.lifeCycleAnnotationProcessor
+
+
+    //RxKotlin
+    implementation rootProject.ext.libraries.rxKotlin
+    implementation rootProject.ext.libraries.rxAndroid
+
+    // Room
+    implementation rootProject.ext.libraries.roomRuntime
+    kapt rootProject.ext.libraries.roomCompiler
+    implementation rootProject.ext.libraries.material
+
+    // youtube player
+    implementation rootProject.ext.libraries.youtubePlayer
+
+    testImplementation rootProject.ext.libraries.junitKtx
+    testImplementation rootProject.ext.libraries.testKtx
+    testImplementation rootProject.ext.libraries.mockk
+    testImplementation rootProject.ext.libraries.mockito
+    testImplementation rootProject.ext.libraries.robolectric
+    testImplementation rootProject.ext.libraries.junit
+
+
+    androidTestImplementation rootProject.ext.libraries.testRunner
+    androidTestImplementation rootProject.ext.libraries.testRule
+    androidTestImplementation rootProject.ext.libraries.junit
+    androidTestImplementation rootProject.ext.libraries.testKtx
+    androidTestImplementation rootProject.ext.libraries.junitKtx
+    androidTestImplementation rootProject.ext.libraries.espressoContrib
+    androidTestImplementation rootProject.ext.libraries.mockitoAndroid
+    androidTestImplementation rootProject.ext.libraries.junitTest
+    androidTestImplementation rootProject.ext.libraries.espresso
+
+}
